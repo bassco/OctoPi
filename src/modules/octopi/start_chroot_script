@@ -59,10 +59,10 @@ pushd /home/pi
     echo "--- Installing mjpg-streamer"
     if [ $( is_in_apt libjpeg62-turbo-dev ) -eq 1 ]; then
       apt-get -y --force-yes install libjpeg62-turbo-dev
-    elif [ $( is_in_apt libjpeg8-dev ) -eq 1 ]; then 
+    elif [ $( is_in_apt libjpeg8-dev ) -eq 1 ]; then
       apt-get -y --force-yes install libjpeg8-dev
     fi
-    
+
     apt-get -y --force-yes --no-install-recommends install imagemagick ffmpeg libv4l-dev
     gitclone OCTOPI_MJPGSTREAMER_REPO mjpg-streamer
     pushd mjpg-streamer
@@ -87,7 +87,7 @@ EOT
       popd
     popd
   fi
-  
+
   #CuraEngine
   if [ "$OCTOPI_INCLUDE_CURAENGINE" == "yes" ]
   then
@@ -120,7 +120,10 @@ EOT
 
   # fetch current yq build and install to /usr/local/bin
   wget -O yq $OCTOPI_YQ_DOWNLOAD && chmod +x yq && mv yq /usr/local/bin
-  
+
+  # fetch current install-wifi script to scripts
+  wget -O install-wifi $OCTOPI_INSTALL_WIFI_SCRIPT && chmod +x install-wifi && mv install-wifi scripts/
+  wget -O LICENSE.install-wifi $OCTOPI_INSTALL_WIFI_LICENSE && mv LICENSE.install-wifi scripts/
 popd
 
 #Make sure user pi has access to serial ports
@@ -160,13 +163,13 @@ do
 done
 
 for ip in $(hostname -I);
-do 
+do
     echo "    http://$ip"
 done
 
 echo
 echo "https is also available, with a self-signed certificate."
-echo 
+echo
 echo "------------------------------------------------------------"
 echo
 EOT
@@ -211,7 +214,7 @@ else
 
   # also we need to make OctoPrint bind to all interfaces because otherwise
   # it will be unaccessible...
-  [ -f /etc/default/octoprint ] && sed -i "s@HOST=127.0.0.1@HOST=0.0.0.0@" /etc/default/octoprint 
+  [ -f /etc/default/octoprint ] && sed -i "s@HOST=127.0.0.1@HOST=0.0.0.0@" /etc/default/octoprint
 fi
 
 ### CuraEngine
